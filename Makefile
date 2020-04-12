@@ -1,1 +1,2 @@
-ghc -o while while.hs
+all:
+	ghc -o while while.hs
