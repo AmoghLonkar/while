@@ -1,0 +1,1 @@
+ghc -o while while.hs
