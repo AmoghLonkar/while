@@ -41,3 +41,12 @@ data Command = Skip
 	     | If BoolExpr Command Command 
 	     | While BoolExpr Command 
 	       deriving (Show)
+
+--Lexer
+--Specifying reserved keywords and operators in syntax
+
+syntaxDef = emptyDef {  Token.reservedNames = ["if", "then", "else", "while", "do", "true", "false", "skip"],
+			Token.reservedOpNames = [":=", "+", "-", "*", "∧", "∨", "¬", "<"]
+}
+
+
