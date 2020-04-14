@@ -11,34 +11,33 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
 --Defining Grammar as done during Lecture
+data ArithExpr = Int Integer
+               | Var String 
+               | ArithEval ArithOp ArithExpr ArithExpr
+                 deriving (Show)
 
-data arithExpr = Int n 
-	       | Var x 
-	       | ABinary arithOp arithExpr arithExpr 
-		 deriving (Show)
+data ArithOp  = Add 
+	      | Sub 
+              | Mul
+                deriving (Show)
 
-data arithOp = add 
-	     | sub 
-             | mul 
-               deriving (Show)
+data BoolExpr = BoolConst Bool 
+	      | Comparison CompOp BoolExpr BoolExpr 
+	      | Neg BoolExpr 
+	      | Logical LogicOp BoolExpr BoolExpr 
+	        deriving (Show)
 
-data booleanExpression = BoolConst p 
-			| Comparison compOp booleanExpression booleanExpression 
-			| Neg booleanExpression 
-			| Logical logicOp booleanExpression booleanExpression 
-			  deriving (Show)
-
-data compOp = equality 
-	    | lessThan 
+data CompOp = Equality 
+	    | LessThan 
 	      deriving (Show)
 
-data logicOp = and 
-	     | or 
+data LogicOp = And 
+	     | Or 
 	       deriving (Show)
 
-data command = skip 
-	     | Seq [command]
-	     | assignment x arithmeticExpression 
-	     | If booleanExpression command command 
-	     | While booleanExpression command 
+data Command = Skip 
+	     | Seq [Command]
+	     | Assignment String ArithExpr 
+	     | If BoolExpr Command Command 
+	     | While BoolExpr Command 
 	       deriving (Show)
