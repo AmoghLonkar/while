@@ -42,11 +42,22 @@ data Command = Skip
 	     | While BoolExpr Command 
 	       deriving (Show)
 
---Lexer
 --Specifying reserved keywords and operators in syntax
 
 syntaxDef = emptyDef {  Token.reservedNames = ["if", "then", "else", "while", "do", "true", "false", "skip"],
 			Token.reservedOpNames = [":=", "+", "-", "*", "∧", "∨", "¬", "<"]
 }
+
+--Lexer using Text.Parsec.Token to split input into predefined tokens
+lexer = Token.makeTokenParser syntaxDef
+
+varName = Token.identifier lexer
+keyword = Token.reserved lexer
+operator = Token.reservedOp lexer
+operand = Token.integer lexer
+spaces = Token.whiteSpace lexer
+parantheses = Token.parens lexer
+braces = Token.brackets lexer
+
 
 
