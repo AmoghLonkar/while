@@ -1,7 +1,8 @@
--- Mainly followed https://wiki.haskell.org/Parsing_a_simple_imperative_language
+-- Mainly followed: https://wiki.haskell.org/Parsing_a_simple_imperative_language
+--                  https://www.youtube.com/watch?v=N9RUqGYuGfw
 -- Also referenced https://wiki.haskell.org/wikiupload/c/c6/ICMI45-paper-en.pdf
 
-module ParseWhile where
+module Main where
 
 import System.IO
 import Control.Monad
@@ -59,5 +60,6 @@ spaces = Token.whiteSpace lexer
 parantheses = Token.parens lexer
 braces = Token.brackets lexer
 
-
+main::IO()
+main = undefined
 
