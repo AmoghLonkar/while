@@ -57,8 +57,19 @@ keyword = Token.reserved lexer
 operator = Token.reservedOp lexer
 operand = Token.integer lexer
 spaces = Token.whiteSpace lexer
-parantheses = Token.parens lexer
+parentheses = Token.parens lexer
 braces = Token.brackets lexer
+
+--Extracting one command from a sequence
+
+command :: Parser Command
+command = parentheses command
+       <|> multipleCommands
+
+multipleCommands =
+   do list <- (sepBy1 firstCommand semi)
+      return $ if length list == 1 then head list else Seq list
+
 
 main::IO()
 main = undefined
