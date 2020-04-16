@@ -67,8 +67,14 @@ command = parentheses command
        <|> multipleCommands
 
 multipleCommands =
-   do list <- (sepBy1 firstCommand semi)
+   do list <- (sepBy1 command' split)
       return $ if length list == 1 then head list else Seq list
+
+command' :: Parser Command
+command' = ifCommand
+	<|> whileCommand
+	<|> skipCommand
+	<|> assignCommand
 
 
 main::IO()
