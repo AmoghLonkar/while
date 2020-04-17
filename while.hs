@@ -70,6 +70,7 @@ multipleCommands =
    do list <- (sepBy1 firstCommand split)
       return $ if length list == 1 then head list else Seq list
 
+--Classifying the command
 firstCommand' :: Parser Command
 firstCommand' = ifCommand
 	     <|> whileCommand
@@ -77,6 +78,37 @@ firstCommand' = ifCommand
 	     <|> assignCommand
 
 
+--Parsers for each command
+ifCommand :: Parser Command 
+ifCommand = 
+	do keyword "if"
+	   condition <- boolExpr
+	   keyword "then"
+	   condTrue <- command
+	   keyword "else"
+	   condFalse <- command
+	   return $ If condition condTrue condFalse	
+
+whileCommand :: Parser Command
+whileCommand = 
+	do keyword = "while"
+	   loopCond <- boolExpr
+	   keyword "do"
+	   loopBody <- command
+	   return $ While loopCond loopBody
+
+assignCommand :: Parser Command
+assignCommand = 
+	do varName <- varToAssign
+	   operator ":="
+	   expression <- arithExpr
+           return $ Assign varName expression
+
+skipCommand :: Parser Command
+skipCommand = 
+	do keyword "skip" 
+	   return Skip
+ 
 main::IO()
 main = undefined
 
