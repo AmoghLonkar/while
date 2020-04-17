@@ -12,6 +12,7 @@ import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
 --Defining Grammar as done during Lecture
+
 data ArithExpr = Int Integer
                | Var String 
                | ArithEval ArithOp ArithExpr ArithExpr
@@ -50,6 +51,7 @@ syntaxDef = emptyDef {  Token.reservedNames = ["if", "then", "else", "while", "d
 }
 
 --Lexer using Text.Parsec.Token to split input into predefined tokens
+
 lexer = Token.makeTokenParser syntaxDef
 
 varName = Token.identifier lexer
@@ -71,6 +73,7 @@ multipleCommands =
       return $ if length list == 1 then head list else Seq list
 
 --Classifying the command
+
 firstCommand' :: Parser Command
 firstCommand' = ifCommand
 	     <|> whileCommand
@@ -79,6 +82,7 @@ firstCommand' = ifCommand
 
 
 --Parsers for each command
+
 ifCommand :: Parser Command 
 ifCommand = do keyword "if"
 	       condition <- boolExpr
@@ -104,7 +108,43 @@ assignCommand = do varName <- varToAssign
 skipCommand :: Parser Command
 skipCommand = do keyword "skip" 
 	   	 return Skip
+
+--Parsing Arithmetic and Boolean Expressions using 
+--buildExpressionParser from Text.ParserCombinators.Parsec.Expr
+
+arithExpr :: Parser ArithExpr
+arithExpr = buildExpressionParser arithOp arithVar
+
+boolExpr :: Parser BoolExpr
+boolExpr = buildExpressionParser boolOp boolVar
+
+--Defining operator precedence for arithmetic and boolean expressions
+
+arithOp = [ 
+	    [Infix, (operator "*" >> return (ArithEval Mul)) AssocLeft], 
+	    [Infix, (operator "+" >> return (ArithEval Add)) AssocLeft],
+            [Infix, (operator "-" >> return (ArithEval Sub)) AssocLeft]
+	  ]
+
+boolOp = [ [Prefix, (operator "¬" >> return (Not ))],
+	   [Infix, (operator "∧" >> return (Logical And)) AssocLeft],
+	   [Infix, (operator "∨" >> return (Logical Or)) AssocLeft]
+	 ]
  
-main::IO()
-main = undefined
+arithVar = parentheses arithExpr
+	<|> liftM Var identifier
+ 	<|> liftM Int integer
+
+boolVar = parentheses boolExpr
+       <|> (keyword "true" >> return (BoolConst True))
+       <|> (keyword "false" >> return (BoolConst False))
+       <|> relationalExpr
+
+relationalExpr = do lhs <- arithExpr
+		    op <- relationalOp 
+		    rhs <- arithExpr
+		    return Comparison op lhs rhs
+
+relationalOp = (keyword "=" return Equality)
+	    <|> (keyword "<" return LessThan)	
 
