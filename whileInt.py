@@ -62,6 +62,14 @@ class Lexer:
             self.nextChar()
         return word
     
+    def getArray(self):
+        array = ""
+        self.nextChar()
+        while self.current is not None and self.current != ']':
+            array += self.current
+            self.nextChar()
+        self.nextChar()
+        return [int(num) for num in array.split(',')]
     
     def exprToToken(self):
         while self.current is not None:
@@ -115,6 +123,10 @@ class Lexer:
             if self.current in [ '{', '}']:
                 self.nextChar()
                 return Token('Braces', self.current)
+
+            if self.current == '[':
+                array = self.getArray();
+                return Token('Array', array)
             
             #Removing white spaces
             if self.current.isspace():
