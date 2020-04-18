@@ -1,3 +1,4 @@
+# coding=utf-8
 import sys
 
 #Token Class
@@ -56,28 +57,67 @@ class Lexer:
     #Getting multi-char objects
     def getWord(self):
         word = ""
-        firstIndex = self.index 
-        while self.current is not None and self.expression[firstIndex].isalpha() is True:
+        while self.current is not None and (self.current.isalpha() or self.current.isdigit()):
             word += self.current
             self.nextChar()
+        return word
+    
+    
+    def exprToToken(self):
+        while self.current is not None:
+            if self.current.isalpha():
+                word = self.getWord()
+                if word in ['if', 'then', 'else', 'while', 'do', 'skip', 'true', 'false']:
+                    return Token('Keyword', word)
+                else:
+                    return Token('Variable', word)
+            
+            if self.current.isdigit():
+                return Token('Integer', self.intVal())
 
-            return word
-    
-    def isKeyword(self):
-        word = self.getWord()
-        keywordList = ['if', 'then', 'else', 'while', 'do', 'skip']
-        
-        if word in keywordList:
-            return True
-        else:
-            return False
-    
-    def isVarName(self):
-        word = self.getWord()
-        if self.isKeyword() is False:
-            return True
-        else:
-            return False
+            if self.current == '-' and self.expression[self.index + 1].isdigit():
+                return Token('Integer', self.negInt())
+
+            if self.current == '+':
+                self.nextChar()
+                return Token('Add', '+')
+
+            if self.current == '-' and self.expression[self.index + 1].isspace():
+                self.nextChar()
+                return Token('Sub', '-')
+
+            if self.current == '*':
+                self.nextChar()
+                return Token('Mul', '*')
+            
+            if self.current == ':':
+                self.nextChar()
+                if self.current == '=':
+                    self.nextChar()
+                    return Token('Assignment', ':=')
+
+            if self.current in ['=', '<']:
+                self.nextChar()
+                return Token('Relational', self.current)
+            
+            if self.current in ['∧', '∨', '¬']:
+                self.nextChar()
+                return Token('Logical', self.current)
+            
+            if self.current == ';':
+                self.nextChar()
+                return Token('Semi', ';')
+
+            if self.current in [ '(', ')']:
+                self.nextChar()
+                return Token('Parens', self.current)
+
+            #Removing white spaces
+            if self.current.isspace():
+                self.nextChar()
+                continue
+
+        return Token('EOF', None)
 
 def main():
     while True:
