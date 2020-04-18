@@ -139,6 +139,76 @@ class Lexer:
 
         return Token('EOF', None)
 
+
+class Num(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class Variable(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class arithOp(object):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.token = self.op = op
+        self.right = right
+
+
+class boolVar(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+
+class relatOp(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class Not(object):
+    def __init__(self, node):
+        self.op = '¬'
+        self.value = node
+
+class logicOp(object):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.token = self.op = op
+        self.right = right
+
+class Skip(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+class Assign(object):
+    def __init__(self, left, op, right):
+        self.left = left
+        self.token = self.op = op
+        self.right = right
+
+class If(object):
+    def __init__(self, condition, ifState, elseState):
+        self.op = 'if'
+        self.condition = condition
+        self.ifState = ifState
+        self.elseState = elseState
+        
+class While(object):
+    def __init__(self, condition, doState):
+        self.op = 'while'
+        self.condition = condition
+        self.doState = doState
+
+class Array(object):
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value
+
+
 def main():
     while True:
         try:
