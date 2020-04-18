@@ -105,24 +105,28 @@ class Lexer:
                     return Token('Assignment', ':=')
 
             if self.current in ['=', '<']:
+                tokenVal = self.current
                 self.nextChar()
-                return Token('Relational', self.current)
+                return Token('Relational', tokenVal)
             
             if self.current in ['∧', '∨', '¬']:
+                tokenVal = self.current
                 self.nextChar()
-                return Token('Logical', self.current)
+                return Token('Logical', tokenVal)
             
             if self.current == ';':
                 self.nextChar()
                 return Token('Semi', ';')
 
             if self.current in [ '(', ')']:
+                tokenVal = self.current
                 self.nextChar()
-                return Token('Parens', self.current)
+                return Token('Parens', tokenVal)
             
             if self.current in [ '{', '}']:
+                tokenVal = self.current
                 self.nextChar()
-                return Token('Braces', self.current)
+                return Token('Braces', tokenVal)
 
             if self.current == '[':
                 array = self.getArray();
