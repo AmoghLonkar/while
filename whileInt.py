@@ -111,7 +111,11 @@ class Lexer:
             if self.current in [ '(', ')']:
                 self.nextChar()
                 return Token('Parens', self.current)
-
+            
+            if self.current in [ '{', '}']:
+                self.nextChar()
+                return Token('Braces', self.current)
+            
             #Removing white spaces
             if self.current.isspace():
                 self.nextChar()
