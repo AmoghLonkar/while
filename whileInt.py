@@ -157,7 +157,7 @@ class arithOp(object):
         self.right = right
 
 
-class boolVar(object):
+class boolVarP(object):
     def __init__(self, token):
         self.token = token
         self.value = token.value
@@ -198,17 +198,101 @@ class If(object):
         self.elseState = elseState
         
 class While(object):
-    def __init__(self, condition, doState):
+    def __init__(self, condition, condTrue, condFalse):
         self.op = 'while'
         self.condition = condition
-        self.doState = doState
+        self.condTrue = condTrue
+        self.condFalse = condFalse
 
 class Array(object):
     def __init__(self, token):
         self.token = token
         self.value = token.value
 
+#Parser Class
+#Parser reads procssed input string and builds an AST
+class Parser(object):
+    def __init__(self, lexer):
+        self.lexer = lexer
+        # set current token to the first token taken from the input
+        self.currentToken = self.lexer.exprToToken()
+    
+    def factor(self):
+        token = self.currentToken
+        if token.type == 'Keyword':
+            if token.value == 'if':
+                self.currentToken = self.lexer.exprToToken()
+                condition = self.boolExpr()
+                if self.currentToken.value == 'then':
+                    self.currentToken = self.lexer.exprToToken()
+                    ifState = self.relationExpr()
+                if self.current_token.value == 'else':
+                    self.currentToken = self.lexer.exprToToken()
+                    elseState = self.relationExpr()
+                return If(condition, ifState, elseState)
+            
+            elif token.value == 'while':
+                self.currentToken = self.lexer.exprToToken()
+                condition = self.boolExpr()
+                condFalse = Skip(Token('keyword','skip'))
+                if self.current_token.value == 'do':
+                    self.currentToken = self.lexer.exprToToken()
+                    if self.currentToken.value == '{':
+                        condTrue = self.relationExpr()
+                else:
+                    condTrue = self.relationVal()
 
+                return While(condition, condTrue, condFalse)
+            
+            elif token.value == 'skip':
+                return Skip(token)
+            
+            elif token.value in ['true', 'false']:
+                return boolVarP(token)
+
+        elif token.type == 'Variable':
+            return Variable(token)
+        
+        elif token.type == 'Integer':
+            return Num(token)
+        
+        if token.type == 'Logical':
+            if token.value  == '¬':
+                self.currentToken = self.lexer.exprToToken()
+                if self.currentToken.value in ['true', 'false']:
+                    return boolVarP(token)
+                elif self.currentToken.value == '(':
+                    return self.boolExpr()
+        
+        elif token.type == 'Parens':
+            if token.value == '(':
+                self.currentToken = self.lexer.exprToToken()
+                return self.boolExpr()
+
+            elif token.value == ')':
+                self.currentToken = self.lexer.exprToToken()
+
+        elif token.type == 'Braces':
+            if token.value == '{':
+                self.currentToken = self.lexer.tokenize()
+                return self.relationExpr()
+        
+            elif token.value == '}':
+                self.currentToken = self.lexer.exprToToken()
+        
+        elif token.type == 'Array':
+            return self.Array(token)
+"""
+    def arithVar(self):
+        
+    def arithExpr(self):
+
+    def boolVar(self):
+    def boolExpr(self):
+    def relationVar(self):
+    def relationExpr(self):
+    
+"""
 def main():
     while True:
         try:
@@ -216,7 +300,7 @@ def main():
         except EOFError:
             break
         tokens = Lexer(expression)
-        #parser = Parser(tokens)
+        parser = Parser(tokens)
         #interpreter = Interpreter(parser)
         #result = interpreter.interpret()
         #print(str(result))
