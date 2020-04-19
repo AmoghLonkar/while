@@ -71,6 +71,13 @@ class Lexer:
         self.nextChar()
         return [int(num) for num in array.split(',')]
     
+    def getLogicOp(self):
+        logicOp = ""
+        while self.current is not None and not self.current.isspace():
+            logicOp += self.current
+            self.nextChar()
+        return logicOp    
+    
     def exprToToken(self):
         while self.current is not None:
             if self.current.isalpha():
@@ -109,9 +116,8 @@ class Lexer:
                 self.nextChar()
                 return Token('Relational', tokenVal)
             
-            if self.current in ['∧', '∨', '¬']:
-                tokenVal = self.current
-                self.nextChar()
+            if self.current in ['\xe2', '\xc2']:
+                tokenVal = self.getLogicOp()
                 return Token('Logical', tokenVal)
             
             if self.current == ';':
@@ -226,7 +232,7 @@ class Parser(object):
                 if self.currentToken.value == 'then':
                     self.currentToken = self.lexer.exprToToken()
                     ifState = self.relationExpr()
-                if self.current_token.value == 'else':
+                if self.currentToken.value == 'else':
                     self.currentToken = self.lexer.exprToToken()
                     elseState = self.relationExpr()
                 return If(condition, ifState, elseState)
@@ -235,7 +241,7 @@ class Parser(object):
                 self.currentToken = self.lexer.exprToToken()
                 condition = self.boolExpr()
                 condFalse = Skip(Token('keyword','skip'))
-                if self.current_token.value == 'do':
+                if self.currentToken.value == 'do':
                     self.currentToken = self.lexer.exprToToken()
                     if self.currentToken.value == '{':
                         condTrue = self.relationExpr()
@@ -308,7 +314,7 @@ class Parser(object):
             #print(self.current_token)
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = BoolopNode(node, self.arithExpr(), token.type)
+            node = logicOp(node, self.arithExpr(), token.type)
         return node
 
     def boolExpr(self):
@@ -317,7 +323,7 @@ class Parser(object):
             #print(self.current_token)
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = BoolopNode(node, self.boolVar(), token.type)
+            node = logicOp(node, self.boolVar(), token.type)
         return node
     
     def parseBool(self):
@@ -329,7 +335,7 @@ class Parser(object):
             #print(self.current_token)
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = BoolopNode(node, self.boolExpr(), token.type)
+            node = logicOp(node, self.boolExpr(), token.type)
         return node
 
     def relationExpr(self):
@@ -338,7 +344,7 @@ class Parser(object):
             #print(self.current_token)
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = BoolopNode(node, self.relationVar(), token.type)
+            node = logicOp(node, self.relationVar(), token.type)
         return node
     
     def parseRel(self):
