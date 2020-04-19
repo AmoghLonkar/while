@@ -282,17 +282,68 @@ class Parser(object):
         
         elif token.type == 'Array':
             return self.Array(token)
-"""
-    def arithVar(self):
-        
-    def arithExpr(self):
 
-    def boolVar(self):
-    def boolExpr(self):
-    def relationVar(self):
-    def relationExpr(self):
+    def arithVar(self):
+        node = self.factor()
+        while self.currentToken.type == 'Mul':
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node =  arithOp(node, self.factor(), token.type)
+        return node
+
+    def arithExpr(self):
+        node = self.arithVar()
+        while self.currentToken.type in ('Add', 'Sub'):
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = arithOp(node, self.arithVar(), token.type)
+        return node
+
+    def parseArith(self):
+        return self.arithExpr()
     
-"""
+    def boolVar(self):
+        node = self.arithExpr()
+        if self.currentToken.type == 'Relational':
+            #print(self.current_token)
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = BoolopNode(node, self.arithExpr(), token.type)
+        return node
+
+    def boolExpr(self):
+        node = self.arithExpr()
+        if self.currentToken.value in  ['∧', '∨']:
+            #print(self.current_token)
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = BoolopNode(node, self.boolVar(), token.type)
+        return node
+    
+    def parseBool(self):
+        return self.boolExpr()
+
+    def relationVar(self):
+        node = self.boolExpr()
+        if self.currentToken.type == 'Assignment':
+            #print(self.current_token)
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = BoolopNode(node, self.boolExpr(), token.type)
+        return node
+
+    def relationExpr(self):
+        node = self.relationVar()
+        if self.currentToken.type == 'Semi':
+            #print(self.current_token)
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = BoolopNode(node, self.relationVar(), token.type)
+        return node
+    
+    def parseRel(self):
+        return self.relationExpr()
+
 def main():
     while True:
         try:
