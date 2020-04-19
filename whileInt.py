@@ -60,6 +60,8 @@ class Lexer:
         while self.current is not None and (self.current.isalpha() or self.current.isdigit()):
             word += self.current
             self.nextChar()
+        if word in ['TRUE', 'FALSE']:
+            word = word.lower()
         return word
     
     def getArray(self):
@@ -221,7 +223,7 @@ class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
         # set current token to the first token taken from the input
-        self.currentToken = self.lexer.exprToToken()
+        self.currentToken = lexer.exprToToken()
     
     def factor(self):
         token = self.currentToken
@@ -246,7 +248,7 @@ class Parser(object):
                     if self.currentToken.value == '{':
                         condTrue = self.relationExpr()
                 else:
-                    condTrue = self.relationVal()
+                    condTrue = self.relationVar()
 
                 return While(condition, condTrue, condFalse)
             
