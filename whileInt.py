@@ -429,8 +429,8 @@ class Interpreter(object):
         self.state = self.parser.state
         self.tree = parser.parseRel()
 
-        def visit(self):
-            return evaluate(self.tree, self.state)
+    def visit(self):
+        return evaluate(self.tree, self.state)
 
 def main():
     while True:
