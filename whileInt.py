@@ -379,17 +379,19 @@ class storeTable(states):
     def insertVal(self, name, value):
         self[name] = value
 
-def evaluate(treeNode, stateTable):
-    currentState = stateTable
+def evaluate(treeNode, stateTable, modifiedVar):
     node = treeNode
+    currentState = stateTable
+    modifiedVar = modifiedVar
+
     if node.op == 'if':
         if(evaluate(node.condition, stateTable)):
-            evaluate(node.ifState, stateTable)
+            evaluate(node.ifState, stateTable, modifiedVar)
         else:
-            evaluate(node.elseState, stateTable)
+            evaluate(node.elseState, stateTable, modifiedVar)
     elif node.op == 'while':
-        while(evaluate(node.condition, stateTable)):
-            evaluate(node.ifState, stateTable)
+        while(evaluate(node.condition, stateTable, modifiedVar)):
+            evaluate(node.ifState, stateTable, modifiedVar)
     elif node.op == 'skip':
         stateTable = stateTable
     elif node.token.type == 'Variable':
@@ -402,35 +404,37 @@ def evaluate(treeNode, stateTable):
     elif node.token.type in ['Integer', 'boolVarP', 'Array']:
         return node.token.value
     elif node.op.type == 'Add':
-        return evaluate(node.left, stateTable) + evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type == 'Sub':
-        return evaluate(node.left, stateTable) - evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type  == 'Mul':
-        return evaluate(node.left, stateTable) * evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type == '∧':
-        return evaluate(node.left, stateTable) and evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type == '∨':
-        return evaluate(node.left, stateTable) or evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
     elif node.op == '¬':
-        return not evaluate(node, stateTable)
+        return not evaluate(node, stateTable, modifiedVar)
     elif node.op.type == '=':
-        return evaluate(node.left, stateTable) == evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type == '<':
-        return evaluate(node.left, stateTable) < evaluate(node.right, stateTable)
+        return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
     elif node.op.type == 'Assignment':
-            stateTable.insertVal(node.left.value, evaluate(node.right, stateTable))
+        modifiedVar.append(node.left.value)    
+        stateTable.insertVal(node.left.value, evaluate(node.right, stateTable, modifiedVar))
     elif node.op.type == 'semi':
-        evaluate(node.left, stateTable)
-        evaluate(node.right, stateTable)
+        evaluate(node.left, stateTable, modifiedVar)
+        evaluate(node.right, stateTable, modifiedVar)
 
 class Interpreter(object):
     def __init__(self, parser):
         self.parser = parser
         self.state = self.parser.state
         self.tree = parser.parseRel()
+        self.modifiedVar = []
 
-    def visit(self):
-        return evaluate(self.tree, self.state)
+    def interpret(self):
+        return evaluate(self.tree, self.state, modifiedVar)
 
 def main():
     while True:
@@ -440,9 +444,17 @@ def main():
             break
         tokens = Lexer(expression)
         parser = Parser(tokens)
-        #interpreter = Interpreter(parser)
-        #result = interpreter.interpret()
-        #print(str(result))
+        interpreter = Interpreter(parser)
+        interpreter.interpret()
+        state = interpreter.state
+        modifiedVar = interpreter.modifiedVar
+        result = '{'
+        for var in modifiedVar:
+            result += (var + " → " + str(state.access(var)))
+            if (modifiedVar.len() > 1):
+                result += ', '
+        result += '}'
 
+        print(result)
 if __name__ == "__main__":
     main()
