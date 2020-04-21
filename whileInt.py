@@ -151,12 +151,14 @@ class Lexer:
 
 class Num(object):
     def __init__(self, token):
-        self.op = token
+        self.op = 'Integer'
+        self.token = token
         self.value = token.value
 
 class Variable(object):
     def __init__(self, token):
-        self.op = token
+        self.op = 'Variable'
+        self.token = token
         self.value = token.value
 
 class arithOp(object):
@@ -168,7 +170,8 @@ class arithOp(object):
 
 class boolVarP(object):
     def __init__(self, token):
-        self.op = token
+        self.token = token
+        self.op = 'boolVarP'
         self.value = token.value
 
 
@@ -216,7 +219,8 @@ class While(object):
 
 class Array(object):
     def __init__(self, token):
-        self.op = token
+        self.op = 'Array'
+        self.token = token
         self.value = token.value
 
 class Semi(object):
@@ -368,7 +372,7 @@ def evaluate(treeNode, stateTable, modifiedVar):
     elif node.op == 'skip':
         stateTable = stateTable
         
-    elif node.op.type == 'Variable':
+    elif node.op == 'Variable':
         #Check if it exists in store and update value
         if node.value in stateTable:
             return stateTable[node.value]
@@ -376,41 +380,41 @@ def evaluate(treeNode, stateTable, modifiedVar):
         else:
             stateTable[node.value] = 0
         
-    elif node.op.type in ['Integer', 'boolVarP', 'Array']:
+    elif node.op in ['Integer', 'boolVarP', 'Array']:
         return node.value
         
-    elif node.op.type == 'Add':
+    elif node.op == 'Add':
         return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
     
-    elif node.op.type == 'Sub':
+    elif node.op == 'Sub':
         return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
         
-    elif node.op.type  == 'Mul':
+    elif node.op  == 'Mul':
         return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
         
-    elif node.op.type == '∧':
+    elif node.op == '∧':
         return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
         
-    elif node.op.type == '∨':
+    elif node.op == '∨':
         return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
         
-    elif node.op == '¬':
+    elif node == '¬':
         return not evaluate(node, stateTable, modifiedVar)
         
-    elif node.op.type == '=':
+    elif node.op == '=':
         return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
         
-    elif node.op.type == '<':
+    elif node.op == '<':
         return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
     
-    elif node.op.type == 'Assignment':
+    elif node.op == 'Assignment':
         modifiedVar.append(node.left.value)
         if node.left.value in stateTable:
             stateTable[node.left.value] = evaluate(node.right, stateTable, modifiedVar)
         else:
             stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
         
-    elif node.op.type == 'semi':
+    elif node.op == 'semi':
         evaluate(node.left, stateTable, modifiedVar)
         evaluate(node.right, stateTable, modifiedVar)
 
@@ -439,7 +443,7 @@ def main():
         result = '{'
         for var in modifiedVar:
             result += (var + " → " + str(state[var]))
-            if (modifiedVar.len() > 1):
+            if (len(modifiedVar) > 1):
                 result += ', '
         result += '}'
 
