@@ -151,12 +151,12 @@ class Lexer:
 
 class Num(object):
     def __init__(self, token):
-        self.token = token
+        self.op = token
         self.value = token.value
 
 class Variable(object):
     def __init__(self, token):
-        self.token = token
+        self.op = token
         self.value = token.value
 
 class arithOp(object):
@@ -168,7 +168,7 @@ class arithOp(object):
 
 class boolVarP(object):
     def __init__(self, token):
-        self.token = token
+        self.op = token
         self.value = token.value
 
 
@@ -216,7 +216,7 @@ class While(object):
 
 class Array(object):
     def __init__(self, token):
-        self.token = token
+        self.op = token
         self.value = token.value
 
 class Semi(object):
@@ -368,16 +368,16 @@ def evaluate(treeNode, stateTable, modifiedVar):
     elif node.op == 'skip':
         stateTable = stateTable
         
-    elif node.token.type == 'Variable':
+    elif node.op == 'Variable':
         #Check if it exists in store and update value
-        if node.token.value in stateTable:
-            return stateTable[node.token.value]
+        if node.value in stateTable:
+            return stateTable[node.value]
         #Else initialize with value 0
         else:
-            stateTable[node.token.value] = 0
+            stateTable[node.value] = 0
         
-    elif node.token.type in ['Integer', 'boolVarP', 'Array']:
-        return node.token.value
+    elif node.op.type in ['Integer', 'boolVarP', 'Array']:
+        return node.value
         
     elif node.op.type == 'Add':
         return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
@@ -422,7 +422,7 @@ class Interpreter(object):
         self.modifiedVar = []
 
     def interpret(self):
-        return evaluate(self.tree, self.state, modifiedVar)
+        return evaluate(self.tree, self.state, self.modifiedVar)
 
 def main():
     while True:
@@ -435,7 +435,7 @@ def main():
         interpreter = Interpreter(parser)
         interpreter.interpret()
         state = interpreter.state
-        modifiedVar = interpreter.modifiedVar
+        modifiedVar = set(interpreter.modifiedVar)
         result = '{'
         for var in modifiedVar:
             result += (var + " → " + str(state[var]))
