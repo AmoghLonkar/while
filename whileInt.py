@@ -24,6 +24,7 @@ class Lexer:
     def __init__(self, expression):
         self.expression = expression
         self.index = 0
+        self.state = {}
         self.current = self.expression[self.index]
 
     def __getitem__(self, index):
@@ -229,6 +230,7 @@ class Semi(object):
 class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
+        self.state = lexer.state
         # set current token to the first token taken from the input
         self.currentToken = lexer.exprToToken()
     
@@ -420,6 +422,16 @@ def evaluate(treeNode, stateTable):
     elif node.op.type == 'semi':
         evaluate(node.left, stateTable)
         evaluate(node.right, stateTable)
+
+class Interpreter(object):
+    def __init__(self, parser):
+        self.parser = parser
+        self.state = self.parser.state
+        self.tree = parser.parseRel()
+
+        def visit(self):
+            return evaluate(self.tree, self.state)
+
 def main():
     while True:
         try:
