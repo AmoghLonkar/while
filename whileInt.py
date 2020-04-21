@@ -439,7 +439,7 @@ def main():
         modifiedVar = interpreter.modifiedVar
         result = '{'
         for var in modifiedVar:
-            result += (var + " → " + str(state.access(var)))
+            result += (var + " → " + str(state[var]))
             if (modifiedVar.len() > 1):
                 result += ', '
         result += '}'
