@@ -13,7 +13,7 @@ class Token:
 
     #Display string for debugging
     def printToken(self):
-          print(Token({type}, {value}).format(type=self.type, value=repr(self.value)))
+        print(Token({type}, {value}).format(type=self.type, value=repr(self.value)))
 
 
 #Lexer Class
@@ -54,7 +54,7 @@ class Lexer:
             self.nextChar()
             value = self.intVal() * -1
         return value
-    
+
     #Getting multi-char objects
     def getWord(self):
         word = ""
@@ -64,7 +64,7 @@ class Lexer:
         if word in ['TRUE', 'FALSE']:
             word = word.lower()
         return word
-    
+
     def getArray(self):
         array = ""
         self.nextChar()
@@ -73,14 +73,14 @@ class Lexer:
             self.nextChar()
         self.nextChar()
         return [int(num) for num in array.split(',')]
-    
+
     def getLogicOp(self):
         logicOp = ""
         while self.current is not None and not self.current.isspace():
             logicOp += self.current
             self.nextChar()
         return logicOp    
-    
+
     def exprToToken(self):
         while self.current is not None:
             if self.current.isalpha():
@@ -89,7 +89,7 @@ class Lexer:
                     return Token('Keyword', word)
                 else:
                     return Token('Variable', word)
-            
+
             if self.current.isdigit():
                 return Token('Integer', self.intVal())
 
@@ -107,7 +107,7 @@ class Lexer:
             if self.current == '*':
                 self.nextChar()
                 return Token('Mul', '*')
-            
+
             if self.current == ':':
                 self.nextChar()
                 if self.current == '=':
@@ -118,11 +118,11 @@ class Lexer:
                 tokenVal = self.current
                 self.nextChar()
                 return Token('Relational', tokenVal)
-            
+
             if self.current in ['\xe2', '\xc2']:
                 tokenVal = self.getLogicOp()
                 return Token('Logical', tokenVal)
-            
+
             if self.current == ';':
                 self.nextChar()
                 return Token('Semi', ';')
@@ -131,7 +131,7 @@ class Lexer:
                 tokenVal = self.current
                 self.nextChar()
                 return Token('Parens', tokenVal)
-            
+
             if self.current in [ '{', '}']:
                 tokenVal = self.current
                 self.nextChar()
@@ -140,7 +140,7 @@ class Lexer:
             if self.current == '[':
                 array = self.getArray();
                 return Token('Array', array)
-            
+
             #Removing white spaces
             if self.current.isspace():
                 self.nextChar()
@@ -206,7 +206,7 @@ class If(object):
         self.condition = condition
         self.ifState = ifState
         self.elseState = elseState
-        
+
 class While(object):
     def __init__(self, condition, condTrue, condFalse):
         self.op = 'while'
@@ -231,9 +231,8 @@ class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
         self.state = lexer.state
-        # set current token to the first token taken from the input
         self.currentToken = lexer.exprToToken()
-    
+
     def factor(self):
         token = self.currentToken
         if token.type == 'Keyword':
@@ -242,195 +241,185 @@ class Parser(object):
                 condition = self.boolExpr()
                 if self.currentToken.value == 'then':
                     self.currentToken = self.lexer.exprToToken()
-                    ifState = self.relationExpr()
-                if self.currentToken.value == 'else':
+                    ifState = self.semiExpr()
+                if self.currentToken == 'else':
                     self.currentToken = self.lexer.exprToToken()
-                    elseState = self.relationExpr()
+                    elseState = self.semiExpr()
                 return If(condition, ifState, elseState)
-            
+
             elif token.value == 'while':
                 self.currentToken = self.lexer.exprToToken()
                 condition = self.boolExpr()
-                condFalse = Skip(Token('keyword','skip'))
+                condFalse = Skip(Token('Keyword', 'skip'))
                 if self.currentToken.value == 'do':
                     self.currentToken = self.lexer.exprToToken()
-                    if self.currentToken.value == '{':
-                        condTrue = self.relationExpr()
-                    else:
-                        condTrue = self.relationVar()
-
+                    condTrue = self.semiExpr()
                 return While(condition, condTrue, condFalse)
-            
-            elif token.value == 'skip':
-                node =  Skip(token)
-            
+
             elif token.value in ['true', 'false']:
-                node =  boolVarP(token)
+                node = boolVarP(token)
+
+            elif token.value == 'skip':
+                node = Skip(token)
+
+        elif token.type == 'Integer':
+            node = Num(token)
 
         elif token.type == 'Variable':
-            node =  Variable(token)
-        
-        elif token.type == 'Integer':
-            node =  Num(token)
-        
-        if token.type == 'Logical':
-            if token.value  == '¬':
+            node = Variable(token)
+
+        elif token.type == 'Logical':
+            if token.value == '¬':
                 self.currentToken = self.lexer.exprToToken()
-                if self.currentToken.value in ['true', 'false']:
-                    node =  boolVarP(token)
-                elif self.currentToken.value == '(':
-                    node =  self.boolExpr()
-        
-        elif token.type == 'Parens':
+                if self.currentToken.value == '{':
+                    self.currentToken = self.lexer.exprToToken()
+
+                elif self.currentToken.value in ['true', 'false']:
+                        node = boolVarP(self.currentToken)
+
+        elif token.type == 'parens':
             if token.value == '(':
                 self.currentToken = self.lexer.exprToToken()
-                node =  self.boolExpr()
+                node = self.boolExpr()
 
             elif token.value == ')':
-                self.currentToken = self.lexer.exprToToken()
+                self.currentToken == self.lexer.exprToToken()
 
-        elif token.type == 'Braces':
+        elif token.type == 'braces':
             if token.value == '{':
-                self.currentToken = self.lexer.tokenize()
-                node =  self.relationExpr()
-        
+                self.currentToken = self.lexer.exprToToken()
+                node = self.semiExpr()
+
             elif token.value == '}':
                 self.currentToken = self.lexer.exprToToken()
-        
+
         elif token.type == 'Array':
-            node =  self.Array(token)
-        
-        elif token.type == 'Semi':
-            node = self.Semi(token)
+            node = Array(token)
 
         else:
-            return node
+            self.currentToken = self.lexer.exprToToken()
+            return node 
 
     def arithVar(self):
         node = self.factor()
-        token = self.lexer.exprToToken()
         while self.currentToken.type == 'Mul':
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node =  arithOp(left = node, right = self.factor(), op = token.type)
+            node = arithOp(node, token.type, self.factor())
         return node
 
     def arithExpr(self):
-        node = self.arithVar()
-        while self.currentToken.type in ('Add', 'Sub'):
+        node = self.factor()
+        while self.currentToken.type in ['Add', 'Sub']:
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = arithOp(left = node, right = self.arithVar(), op = token.type)
-        return node
-
-    def parseArith(self):
-        return self.arithExpr()
-    
-    def boolVar(self):
-        node = self.arithExpr()
-        if self.currentToken.type == 'Relational':
-            #print(self.current_token)
-            token = self.currentToken
-            self.currentToken = self.lexer.exprToToken()
-            node = logicOp(left = node, right = self.arithExpr(), op = token.type)
-        return node
-
-    def boolExpr(self):
-        node = self.boolVar()
-        if self.currentToken.value in  ['∧', '∨']:
-            #print(self.current_token)
-            token = self.currentToken
-            self.currentToken = self.lexer.exprToToken()
-            node = logicOp(left = node, right = self.boolVar(), op = token.type)
-        return node
-    
-    def parseBool(self):
-        return self.boolExpr()
-
-    def relationVar(self):
-        node = self.boolExpr()
-        if self.currentToken.type == 'Assignment':
-            #print(self.current_token)
-            token = self.currentToken
-            self.currentToken = self.lexer.exprToToken()
-            node = logicOp(left = node, right = self.boolExpr(), op = token.type)
+            node = arithOp(node, token.type, self.arithVar())
         return node
 
     def relationExpr(self):
-        node = self.relationVar()
-        if self.currentToken.type == 'Semi':
-            #print(self.current_token)
+        node = self.arithExpr()
+        if self.currentToken.value in ['=', '<']:
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
-            node = logicOp(left = node, right = self.relationVar(), op = token.type)
+            node = arithOp(node, token.type, self.arithExpr())
+        return node
+
+    def boolExpr(self):
+        node = self.relationExpr()
+        while self.currentToken.type in ['∧', '∨']:
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = arithOp(node, token.type, self.relationExpr())
+        return node
+
+    def assignExpr(self):
+        node = self.boolExpr()
+        if self.currentToken.type == 'Assignment':
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = Assign(node, token.type, self.boolExpr())
         return node
     
-    def parseRel(self):
-        return self.relationExpr()
+    def semiExpr(self):
+        node = self.assignExpr()
+        if self.currentToken.type == 'Semi':
+            token = self.currentToken
+            self.currentToken = self.lexer.exprToToken()
+            node = Semi(node, token.type, self.assignExpr())
+        return node
 
-class storeTable(states):
-    # __init__ function
-    def __init__(self):
-        self = dict()
+    def parseExpr(self):
+        return self.semiExpr()
     
-    def access(self, name):
-        return self[name]
+    def evaluate(treeNode, stateTable, modifiedVar):
+        node = treeNode
+        currentState = stateTable
+        modifiedVar = modifiedVar
 
-    def insertVal(self, name, value):
-        self[name] = value
-
-def evaluate(treeNode, stateTable, modifiedVar):
-    node = treeNode
-    currentState = stateTable
-    modifiedVar = modifiedVar
-
-    if node.op == 'if':
-        if(evaluate(node.condition, stateTable)):
-            evaluate(node.ifState, stateTable, modifiedVar)
-        else:
-            evaluate(node.elseState, stateTable, modifiedVar)
-    elif node.op == 'while':
-        while(evaluate(node.condition, stateTable, modifiedVar)):
-            evaluate(node.ifState, stateTable, modifiedVar)
-    elif node.op == 'skip':
-        stateTable = stateTable
-    elif node.token.type == 'Variable':
-        #Check if it exists in store and update value
-        if node.token.value in stateTable:
-            return stateTable.access(node.token.value)
-        #Else initialize with value 0
-        else:
-            stateTable.insertVal(node.token.value, 0)
-    elif node.token.type in ['Integer', 'boolVarP', 'Array']:
-        return node.token.value
-    elif node.op.type == 'Add':
-        return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type == 'Sub':
-        return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type  == 'Mul':
-        return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type == '∧':
-        return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type == '∨':
-        return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
-    elif node.op == '¬':
-        return not evaluate(node, stateTable, modifiedVar)
-    elif node.op.type == '=':
-        return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type == '<':
-        return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
-    elif node.op.type == 'Assignment':
-        modifiedVar.append(node.left.value)    
-        stateTable.insertVal(node.left.value, evaluate(node.right, stateTable, modifiedVar))
-    elif node.op.type == 'semi':
-        evaluate(node.left, stateTable, modifiedVar)
-        evaluate(node.right, stateTable, modifiedVar)
+        if node.op == 'if':
+            if(evaluate(node.condition, stateTable)):
+                evaluate(node.ifState, stateTable, modifiedVar)
+            else:
+                evaluate(node.elseState, stateTable, modifiedVar)
+        
+        elif node.op == 'while':
+            while(evaluate(node.condition, stateTable, modifiedVar)):
+                evaluate(node.ifState, stateTable, modifiedVar)
+        
+        elif node.op == 'skip':
+            stateTable = stateTable
+        
+        elif node.token.type == 'Variable':
+            #Check if it exists in store and update value
+            if node.token.value in stateTable:
+                return stateTable[node.token.value]
+            #Else initialize with value 0
+            else:
+                stateTable[node.token.value] = 0
+        
+        elif node.token.type in ['Integer', 'boolVarP', 'Array']:
+            return node.token.value
+        
+        elif node.op.type == 'Add':
+            return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op.type == 'Sub':
+            return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op.type  == 'Mul':
+            return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op.type == '∧':
+            return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op.type == '∨':
+            return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op == '¬':
+            return not evaluate(node, stateTable, modifiedVar)
+        
+        elif node.op.type == '=':
+            return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
+        
+        elif node.op.type == '<':
+            return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
+    
+        elif node.op.type == 'Assignment':
+            modifiedVar.append(node.left.value)
+            if node.left.value in stateTable:
+                stateTable[node.left.value] = evaluate(node.right, stateTable, modifiedVar)
+            else:
+                stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
+        
+        elif node.op.type == 'semi':
+            evaluate(node.left, stateTable, modifiedVar)
+            evaluate(node.right, stateTable, modifiedVar)
 
 class Interpreter(object):
     def __init__(self, parser):
         self.parser = parser
         self.state = self.parser.state
-        self.tree = parser.parseRel()
+        self.tree = parser.parseExpr()
         self.modifiedVar = []
 
     def interpret(self):
