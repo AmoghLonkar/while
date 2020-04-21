@@ -296,9 +296,8 @@ class Parser(object):
         elif token.type == 'Array':
             node = Array(token)
 
-        else:
-            self.currentToken = self.lexer.exprToToken()
-            return node 
+        self.currentToken = self.lexer.exprToToken()
+        return node 
 
     def arithVar(self):
         node = self.factor()
@@ -309,7 +308,7 @@ class Parser(object):
         return node
 
     def arithExpr(self):
-        node = self.factor()
+        node = self.arithVar()
         while self.currentToken.type in ['Add', 'Sub']:
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
