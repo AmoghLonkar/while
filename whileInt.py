@@ -61,8 +61,6 @@ class Lexer:
         while self.current is not None and (self.current.isalpha() or self.current.isdigit()):
             word += self.current
             self.nextChar()
-        if word in ['TRUE', 'FALSE']:
-            word = word.lower()
         return word
 
     def getArray(self):
