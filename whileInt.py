@@ -341,7 +341,7 @@ class Parser(object):
     
     def semiExpr(self):
         node = self.assignExpr()
-        if self.currentToken.type == 'Semi':
+        while self.currentToken.type == 'Semi':
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
             node = Semi(node, token.type, self.assignExpr())
@@ -368,7 +368,7 @@ def evaluate(treeNode, stateTable, modifiedVar):
     elif node.op == 'skip':
         stateTable = stateTable
         
-    elif node.op == 'Variable':
+    elif node.op.type == 'Variable':
         #Check if it exists in store and update value
         if node.value in stateTable:
             return stateTable[node.value]
