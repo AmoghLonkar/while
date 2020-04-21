@@ -350,69 +350,69 @@ class Parser(object):
     def parseExpr(self):
         return self.semiExpr()
     
-    def evaluate(treeNode, stateTable, modifiedVar):
-        node = treeNode
-        currentState = stateTable
-        modifiedVar = modifiedVar
+def evaluate(treeNode, stateTable, modifiedVar):
+    node = treeNode
+    currentState = stateTable
+    modifiedVar = modifiedVar
 
-        if node.op == 'if':
-            if(evaluate(node.condition, stateTable)):
-                evaluate(node.ifState, stateTable, modifiedVar)
-            else:
-                evaluate(node.elseState, stateTable, modifiedVar)
+    if node.op == 'if':
+        if(evaluate(node.condition, stateTable)):
+            evaluate(node.ifState, stateTable, modifiedVar)
+        else:
+            evaluate(node.elseState, stateTable, modifiedVar)
         
-        elif node.op == 'while':
-            while(evaluate(node.condition, stateTable, modifiedVar)):
-                evaluate(node.ifState, stateTable, modifiedVar)
+    elif node.op == 'while':
+        while(evaluate(node.condition, stateTable, modifiedVar)):
+            evaluate(node.ifState, stateTable, modifiedVar)
         
-        elif node.op == 'skip':
-            stateTable = stateTable
+    elif node.op == 'skip':
+        stateTable = stateTable
         
-        elif node.token.type == 'Variable':
-            #Check if it exists in store and update value
-            if node.token.value in stateTable:
-                return stateTable[node.token.value]
-            #Else initialize with value 0
-            else:
-                stateTable[node.token.value] = 0
+    elif node.token.type == 'Variable':
+        #Check if it exists in store and update value
+        if node.token.value in stateTable:
+            return stateTable[node.token.value]
+        #Else initialize with value 0
+        else:
+            stateTable[node.token.value] = 0
         
-        elif node.token.type in ['Integer', 'boolVarP', 'Array']:
-            return node.token.value
+    elif node.token.type in ['Integer', 'boolVarP', 'Array']:
+        return node.token.value
         
-        elif node.op.type == 'Add':
-            return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op.type == 'Sub':
-            return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op.type  == 'Mul':
-            return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op.type == '∧':
-            return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op.type == '∨':
-            return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op == '¬':
-            return not evaluate(node, stateTable, modifiedVar)
-        
-        elif node.op.type == '=':
-            return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
-        
-        elif node.op.type == '<':
-            return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
+    elif node.op.type == 'Add':
+        return evaluate(node.left, stateTable, modifiedVar) + evaluate(node.right, stateTable, modifiedVar)
     
-        elif node.op.type == 'Assignment':
-            modifiedVar.append(node.left.value)
-            if node.left.value in stateTable:
-                stateTable[node.left.value] = evaluate(node.right, stateTable, modifiedVar)
-            else:
-                stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
+    elif node.op.type == 'Sub':
+        return evaluate(node.left, stateTable, modifiedVar) - evaluate(node.right, stateTable, modifiedVar)
         
-        elif node.op.type == 'semi':
-            evaluate(node.left, stateTable, modifiedVar)
-            evaluate(node.right, stateTable, modifiedVar)
+    elif node.op.type  == 'Mul':
+        return evaluate(node.left, stateTable, modifiedVar) * evaluate(node.right, stateTable, modifiedVar)
+        
+    elif node.op.type == '∧':
+        return evaluate(node.left, stateTable, modifiedVar) and evaluate(node.right, stateTable, modifiedVar)
+        
+    elif node.op.type == '∨':
+        return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
+        
+    elif node.op == '¬':
+        return not evaluate(node, stateTable, modifiedVar)
+        
+    elif node.op.type == '=':
+        return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
+        
+    elif node.op.type == '<':
+        return evaluate(node.left, stateTable, modifiedVar) < evaluate(node.right, stateTable, modifiedVar)
+    
+    elif node.op.type == 'Assignment':
+        modifiedVar.append(node.left.value)
+        if node.left.value in stateTable:
+            stateTable[node.left.value] = evaluate(node.right, stateTable, modifiedVar)
+        else:
+            stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
+        
+    elif node.op.type == 'semi':
+        evaluate(node.left, stateTable, modifiedVar)
+        evaluate(node.right, stateTable, modifiedVar)
 
 class Interpreter(object):
     def __init__(self, parser):
