@@ -244,6 +244,7 @@ class Parser(object):
                 if self.currentToken.value == 'then':
                     self.currentToken = self.lexer.exprToToken()
                     ifState = self.semiExpr()
+                    self.currentToken = self.lexer.exprToToken()
                 if self.currentToken == 'else':
                     self.currentToken = self.lexer.exprToToken()
                     elseState = self.semiExpr()
@@ -259,6 +260,7 @@ class Parser(object):
                 return While(condition, condTrue, condFalse)
 
             elif token.value in ['true', 'false']:
+                self.currentToken = self.lexer.exprToToken
                 node = boolVarP(token)
 
             elif token.value == 'skip':
@@ -327,7 +329,7 @@ class Parser(object):
 
     def boolExpr(self):
         node = self.relationExpr()
-        while self.currentToken.type in ['∧', '∨']:
+        while self.currentToken.value in ['∧', '∨']:
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
             node = arithOp(node, token.type, self.relationExpr())
@@ -354,18 +356,18 @@ class Parser(object):
     
 def evaluate(treeNode, stateTable, modifiedVar):
     node = treeNode
-    currentState = stateTable
+    stateTable = stateTable
     modifiedVar = modifiedVar
 
     if node.op == 'if':
-        if(evaluate(node.condition, stateTable)):
+        if(evaluate(node.condition, stateTable, modifiedVar)):
             evaluate(node.ifState, stateTable, modifiedVar)
         else:
             evaluate(node.elseState, stateTable, modifiedVar)
         
     elif node.op == 'while':
         while(evaluate(node.condition, stateTable, modifiedVar)):
-            evaluate(node.ifState, stateTable, modifiedVar)
+            evaluate(node.condTrue, stateTable, modifiedVar)
         
     elif node.op == 'skip':
         stateTable = stateTable
@@ -376,8 +378,9 @@ def evaluate(treeNode, stateTable, modifiedVar):
             return stateTable[node.value]
         #Else initialize with value 0
         else:
-            stateTable[node.value] = 0
-        
+            stateTable.update({node.value: 0})
+            #stateTable[node.value] = 0
+            return 0 
     elif node.op in ['Integer', 'boolVarP', 'Array']:
         return node.value
         
@@ -396,8 +399,8 @@ def evaluate(treeNode, stateTable, modifiedVar):
     elif node.op == '∨':
         return evaluate(node.left, stateTable, modifiedVar) or evaluate(node.right, stateTable, modifiedVar)
         
-    elif node == '¬':
-        return not evaluate(node, stateTable, modifiedVar)
+    elif node.op == '¬':
+        return not evaluate(node.value, stateTable, modifiedVar)
         
     elif node.op == '=':
         return evaluate(node.left, stateTable, modifiedVar) == evaluate(node.right, stateTable, modifiedVar)
@@ -410,7 +413,7 @@ def evaluate(treeNode, stateTable, modifiedVar):
         if node.left.value in stateTable:
             stateTable[node.left.value] = evaluate(node.right, stateTable, modifiedVar)
         else:
-            stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
+            stateTable = stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
         
     elif node.op == 'semi':
         evaluate(node.left, stateTable, modifiedVar)
@@ -419,7 +422,7 @@ def evaluate(treeNode, stateTable, modifiedVar):
 class Interpreter(object):
     def __init__(self, parser):
         self.parser = parser
-        self.state = self.parser.state
+        self.state = parser.state
         self.tree = parser.parseExpr()
         self.modifiedVar = []
 
@@ -432,6 +435,7 @@ def main():
             expression = input("")
         except EOFError:
             break
+        
         tokens = Lexer(expression)
         parser = Parser(tokens)
         interpreter = Interpreter(parser)
@@ -444,7 +448,8 @@ def main():
             if (len(modifiedVar) > 1):
                 result += ', '
         result += '}'
-
+        
         print(result)
+
 if __name__ == "__main__":
     main()
