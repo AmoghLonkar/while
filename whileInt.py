@@ -272,12 +272,13 @@ class Parser(object):
 
         elif token.value == '¬':
             self.currentToken = self.lexer.exprToToken()
-            if self.currentToken.value == '{':
+            if self.currentToken.value == '(':
                 self.currentToken = self.lexer.exprToToken()
-
-        elif self.currentToken.value in ['true', 'false']:
-                node = boolVarP(self.currentToken)
-
+                node = self.boolExpr()
+            elif self.currentToken.value in ['true', 'false']:
+                node = boolVarP(token)
+            node = Not(node)
+        
         elif token.value == '(':
             self.currentToken = self.lexer.exprToToken()
             node = self.boolExpr()
