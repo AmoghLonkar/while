@@ -1,0 +1,287 @@
+commit e9bf42ce907015cc4fa722ad22aa1019d27e61d9
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Wed Apr 22 16:44:30 2020 -0700
+
+    Added own test cases
+
+commit 975770f98979d1da5eb305819f5cdf19dba5a5d7
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Wed Apr 22 09:21:49 2020 -0700
+
+    changed output formatting
+
+commit 8178aa57b3539686895cad409881bd594331a8c2
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Wed Apr 22 09:16:17 2020 -0700
+
+    Fixed typo for semi in evaluate
+
+commit 958fc4664b42d1a856644165bfd8406986178c2e
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Wed Apr 22 09:08:10 2020 -0700
+
+    Fixed issue while parsing Not, need to resolve semi
+
+commit c52ce392459b449810722b11c1fed86f05e5c098
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Wed Apr 22 08:32:34 2020 -0700
+
+    Parser works!
+
+commit a55198c63e38a5a135385171d49eee489dd1a2e5
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 22:45:57 2020 -0700
+
+    Made some progress! If and else are parsed correctly, need to check evaluator
+
+commit 2d1cac0f5d0fec3083caf28dec5ef238130d78d5
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 21:39:54 2020 -0700
+
+    Fixed parsing Not node in factor method
+
+commit 24a52a768efce12201d6c12314de6ecce3b4c3f1
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 21:31:54 2020 -0700
+
+    removed nested if in factor, some progress
+
+commit 067820d6dde0ae93f8e35466b8674a2cc742536e
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 19:49:59 2020 -0700
+
+    Made small corrections to evaluate()
+
+commit 74f5da6b280bee1d88e76e322c86c528928a180d
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 16:14:22 2020 -0700
+
+    Made TRUE and FALSE as variables
+
+commit 1e6d51572fd9cf4c2eb0357ddf1cafeb737ce6ab
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 16:10:29 2020 -0700
+
+    Fixed str has no atrribute type issue, works for calculations
+
+commit 9cca2fb240eabc4a274fcdbb1e1ddd3e8b2041f1
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 15:28:10 2020 -0700
+
+    Changed semiExpr slightly
+
+commit 7434999d0afdf8f84956a3bda52ad9aa78a275c8
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 15:04:13 2020 -0700
+
+    Need to resolve elseState and node.op.type issues
+
+commit 1472f1c644edd01b61c797136919021442a5e690
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 14:27:21 2020 -0700
+
+    Fixed indentation of evaluate()
+
+commit ba05dd1490db7923e5592324e9be9354121a7a31
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 13:56:29 2020 -0700
+
+    small changes to arithExpr and factor() method
+
+commit f67b4d755587b03b05c919a4cfe713163a8b131e
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 12:29:19 2020 -0700
+
+    Fixed small issue in main, need to figure out why code not outputting
+
+commit 0f413dedd26458baf2c10ca91d52abc3ccf85907
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Tue Apr 21 12:23:50 2020 -0700
+
+    Cleaned up parser class code
+
+commit 22817333e3cc31e5403c3a5fa174ab72f0e6eb91
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Mon Apr 20 21:37:20 2020 -0700
+
+    Added code in main, added a modifiedVar to keep track of changes to the state table, might be able to do without storeTable class and use state member variable as a dictionary
+
+commit 4148d05a01f5e8e80beef3187454399695716606
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Mon Apr 20 17:59:53 2020 -0700
+
+    Resolved indentation of visit in Interpreter class
+
+commit cb598ad8b92c52be4fbc8b5c23595b81217e50bc
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Mon Apr 20 17:58:33 2020 -0700
+
+    wrote code for Interpreter, need to resolve Parser issue
+
+commit 40873b8905057048230e6e7fd331296f9ee767fe
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Mon Apr 20 17:32:21 2020 -0700
+
+    Added semi node, storeTable class, evaluate function
+
+commit 9d2ae9e8c258e29d456713a8fb1e82e77bad9903
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 20:13:49 2020 -0700
+
+    Fixed parser.currentToken and allowing for upper case true/false in Lexer
+
+commit 151112553a10e5db3f3685a887ef8bac04aaf81d
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 19:30:10 2020 -0700
+
+    fixed lexer to include logical operators based on utf-8 encoding
+
+commit 4a976dbcc1d1496b16edc9a64bb4f116a8e54eac
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 17:09:57 2020 -0700
+
+    Finished writing code for parser
+
+commit 85508e9009eacabab3e452706acc79aec2e7121d
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 15:15:27 2020 -0700
+
+    Added code for factor method in Parser
+
+commit 8ef77b68be0a168468c7c8e35644af38c8a3341a
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 12:23:09 2020 -0700
+
+    Defined node classes for AST
+
+commit 0bfaa2afaf44972f7f1397b5a33ec32d35fed0e8
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Sat Apr 18 11:22:38 2020 -0700
+
+    updated code for tokens checked by list
+
+commit 43986d5921bf335d8fb17d759c9440e8b6d943a0
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 22:49:55 2020 -0700
+
+    Array added to lexer
+
+commit 900c4d13acafe4d97efd51e132e7485fd39496ce
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 22:15:59 2020 -0700
+
+    Added curly braces token to lexer
+
+commit e29c219ce1fa3d801165ab465dc2deaa4dfdb251
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 22:14:00 2020 -0700
+
+    Working lexer
+
+commit b50a58b696b3f3c7ee51fbd144698b1cae3eb1e5
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 21:06:47 2020 -0700
+
+    Trying to tokenize word
+
+commit 477620dd4bae1946dd0ae6ac1b1868231388e09a
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 19:05:26 2020 -0700
+
+    Initial commit
+
+commit 2391a0703dcfbbfeb84f22261319261088f2b7bf
+Author: AmoghLonkar <alonkar@trashpanda.soe.ucsc.edu>
+Date:   Fri Apr 17 19:04:02 2020 -0700
+
+    Changed makefile to run python script
+
+commit 50a425622ff617f75176391aa8af1c4d05ad8953
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Fri Apr 17 10:31:32 2020 -0700
+
+    Finished writing parser, getting GHC bug
+
+commit c170e0b84835e043637ce586c4ba1ec1b897d66b
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Thu Apr 16 20:54:05 2020 -0700
+
+    resolved parse error issue, had an extra = in the statement
+
+commit 82714e765914dc3a36aef1eb274db6f00bfa7ce7
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Thu Apr 16 20:43:19 2020 -0700
+
+    Added code to parse each statement, getting parse error on =
+
+commit de6e71e354fd5b7d40b8828319bc2966b98cbe41
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Wed Apr 15 23:39:40 2020 -0700
+
+    Determining type of single command based on while rules. not in scope error solved by defining associated function
+
+commit 1130e9b03c5f909954ac6049ec5c6271d17c1809
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Wed Apr 15 23:38:41 2020 -0700
+
+    Determining type of single command based on while rules. not in scope error solved by defining associated function
+
+commit 7a003847da34d6b0aa22aeb8a7b6863f03236a8f
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Wed Apr 15 23:10:50 2020 -0700
+
+    Wrote initial code for parser, getting variable not in scope error
+
+commit 9333bceec4835c7d2bdea38f212dddbd76a80a59
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Wed Apr 15 10:31:44 2020 -0700
+
+    Renamed module to Main to remove compile error
+
+commit b046a96a3596880d34febe8f6e676a17f62e5d42
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Tue Apr 14 17:07:26 2020 -0700
+
+    Added lexer using Text.Parsec.Token module
+
+commit b96d99aa165c8e4a07b7caa538a61810cb1dd5d3
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Tue Apr 14 14:14:45 2020 -0700
+
+    Added syntax definitions of reserved keywords and specific operators
+
+commit b53396835d0e791c42888df1d790102312ca3c04
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Mon Apr 13 22:39:24 2020 -0700
+
+    Class declaration, typedef issues fixed
+
+commit 41b234731ff6e261a4875deb3def4555c9e15b9c
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Mon Apr 13 22:12:57 2020 -0700
+
+    Error of Malformed class declaration while defining grammar
+
+commit 726310a62d8ebcfa5b0f45a3bb9acd9e44b3496c
+Author: Amogh <alonkar@ucsc.edu>
+Date:   Sun Apr 12 16:42:55 2020 -0700
+
+    Working Makefile
+
+commit 0541cb598b648f16f78a6518d1bb1e9792100be0
+Author: Amogh Lonkar <35778429+AmoghLonkar@users.noreply.github.com>
+Date:   Sun Apr 12 16:15:46 2020 -0700
+
+    Adding makefile
+
+commit fbeef9a6989b41524729389eab466fd436389eb0
+Author: Amogh Lonkar <35778429+AmoghLonkar@users.noreply.github.com>
+Date:   Sat Apr 11 18:44:01 2020 -0700
+
+    Adding test case files
+
+commit fb78ca1f60c430b7b9194969d48df7b6c34ff0b6
+Author: Amogh Lonkar <35778429+AmoghLonkar@users.noreply.github.com>
+Date:   Sat Apr 11 18:42:52 2020 -0700
+
+    Initial commit
