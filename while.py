@@ -170,8 +170,11 @@ class boolVarP(object):
     def __init__(self, token):
         self.token = token
         self.op = 'boolVarP'
-        self.value = token.value
-
+        if token.value == 'true':
+            self.value = True
+        else:
+            self.value = False
+        
 class relatOp(object):
     def __init__(self, token):
         self.token = token
@@ -239,12 +242,12 @@ class Parser(object):
         if token.value == 'if':
             self.currentToken = self.lexer.exprToToken()
             condition = self.boolExpr()
-            if self.currentToken.value == 'then':
-                self.currentToken = self.lexer.exprToToken()
-                ifState = self.semiExpr()
-            if self.currentToken == 'else':
-                self.currentToken = self.lexer.exprToToken()
-                elseState = self.semiExpr()
+            #if self.currentToken.value == 'then':
+            self.currentToken = self.lexer.exprToToken()
+            ifState = self.semiExpr()
+            #if self.currentToken == 'else':
+            self.currentToken = self.lexer.exprToToken()
+            elseState = self.semiExpr()
             return If(condition, ifState, elseState)
 
         elif token.value == 'while':
@@ -427,10 +430,11 @@ class Interpreter(object):
 def main():
     while True:
         try:
-            expression = raw_input("")
+            expression = raw_input()
         except EOFError:
             break
         
+        expression = expression.replace("'","")
         tokens = Lexer(expression)
         parser = Parser(tokens)
         interpreter = Interpreter(parser)
