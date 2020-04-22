@@ -278,7 +278,7 @@ class Parser(object):
                 self.currentToken = self.lexer.exprToToken()
                 node = self.boolExpr()
             elif self.currentToken.value in ['true', 'false']:
-                node = boolVarP(token)
+                node = boolVarP(self.currentToken)
             node = Not(node)
         
         elif token.value == '(':
