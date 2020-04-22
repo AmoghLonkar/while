@@ -172,7 +172,6 @@ class boolVarP(object):
         self.op = 'boolVarP'
         self.value = token.value
 
-
 class relatOp(object):
     def __init__(self, token):
         self.token = token
@@ -237,34 +236,33 @@ class Parser(object):
 
     def factor(self):
         token = self.currentToken
-        if token.type == 'Keyword':
-            if token.value == 'if':
+        if token.value == 'if':
+            self.currentToken = self.lexer.exprToToken()
+            condition = self.boolExpr()
+            if self.currentToken.value == 'then':
                 self.currentToken = self.lexer.exprToToken()
-                condition = self.boolExpr()
-                if self.currentToken.value == 'then':
-                    self.currentToken = self.lexer.exprToToken()
-                    ifState = self.semiExpr()
-                    self.currentToken = self.lexer.exprToToken()
-                if self.currentToken == 'else':
-                    self.currentToken = self.lexer.exprToToken()
-                    elseState = self.semiExpr()
-                return If(condition, ifState, elseState)
-
-            elif token.value == 'while':
+                ifState = self.semiExpr()
                 self.currentToken = self.lexer.exprToToken()
-                condition = self.boolExpr()
-                condFalse = Skip(Token('Keyword', 'skip'))
-                if self.currentToken.value == 'do':
-                    self.currentToken = self.lexer.exprToToken()
-                    condTrue = self.semiExpr()
-                return While(condition, condTrue, condFalse)
+            if self.currentToken == 'else':
+                self.currentToken = self.lexer.exprToToken()
+                elseState = self.semiExpr()
+            return If(condition, ifState, elseState)
 
-            elif token.value in ['true', 'false']:
-                self.currentToken = self.lexer.exprToToken
-                node = boolVarP(token)
+        elif token.value == 'while':
+            self.currentToken = self.lexer.exprToToken()
+            condition = self.boolExpr()
+            condFalse = Skip(Token('Keyword', 'skip'))
+            if self.currentToken.value == 'do':
+                self.currentToken = self.lexer.exprToToken()
+                condTrue = self.semiExpr()
+            return While(condition, condTrue, condFalse)
 
-            elif token.value == 'skip':
-                node = Skip(token)
+        elif token.value in ['true', 'false']:
+            self.currentToken = self.lexer.exprToToken
+            node = boolVarP(token)
+
+        elif token.value == 'skip':
+            node = Skip(token)
 
         elif token.type == 'Integer':
             node = Num(token)
@@ -272,30 +270,27 @@ class Parser(object):
         elif token.type == 'Variable':
             node = Variable(token)
 
-        elif token.type == 'Logical':
-            if token.value == '¬':
+        elif token.value == '¬':
+            self.currentToken = self.lexer.exprToToken()
+            if self.currentToken.value == '{':
                 self.currentToken = self.lexer.exprToToken()
-                if self.currentToken.value == '{':
-                    self.currentToken = self.lexer.exprToToken()
 
-                elif self.currentToken.value in ['true', 'false']:
-                        node = boolVarP(self.currentToken)
+        elif self.currentToken.value in ['true', 'false']:
+                node = boolVarP(self.currentToken)
 
-        elif token.type == 'parens':
-            if token.value == '(':
-                self.currentToken = self.lexer.exprToToken()
-                node = self.boolExpr()
+        elif token.value == '(':
+            self.currentToken = self.lexer.exprToToken()
+            node = self.boolExpr()
 
-            elif token.value == ')':
-                self.currentToken == self.lexer.exprToToken()
+        elif token.value == ')':
+            self.currentToken == self.lexer.exprToToken()
 
-        elif token.type == 'braces':
-            if token.value == '{':
-                self.currentToken = self.lexer.exprToToken()
-                node = self.semiExpr()
+        elif token.value == '{':
+            self.currentToken = self.lexer.exprToToken()
+            node = self.semiExpr()
 
-            elif token.value == '}':
-                self.currentToken = self.lexer.exprToToken()
+        elif token.value == '}':
+            self.currentToken = self.lexer.exprToToken()
 
         elif token.type == 'Array':
             node = Array(token)
