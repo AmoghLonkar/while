@@ -440,12 +440,15 @@ def main():
         interpreter = Interpreter(parser)
         interpreter.interpret()
         state = interpreter.state
-        modifiedVar = set(interpreter.modifiedVar)
+        modifiedVar = sorted(set(interpreter.modifiedVar))
         result = '{'
+        count = 0
         for var in modifiedVar:
             result += (var + " → " + str(state[var]))
-            if (len(modifiedVar) > 1):
+            count += 1 
+            if (len(modifiedVar) > 1 and count < len(modifiedVar)):
                 result += ', '
+        
         result += '}'
         
         print(result)
