@@ -413,7 +413,7 @@ def evaluate(treeNode, stateTable, modifiedVar):
         else:
             stateTable = stateTable.update({node.left.value: evaluate(node.right, stateTable, modifiedVar)})
         
-    elif node.op == 'semi':
+    elif node.op == 'Semi':
         evaluate(node.left, stateTable, modifiedVar)
         evaluate(node.right, stateTable, modifiedVar)
 
