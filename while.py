@@ -1,6 +1,8 @@
 # coding=utf-8
-import sys
+#referenced my code from hw1-arith and https://github.com/versey-sherry/while/parsewhile.py
 
+import sys
+flag = 0
 #Token Class
 #Token has type and value
 #Token types: integer, add, sub, mul
@@ -238,15 +240,18 @@ class Parser(object):
         self.currentToken = lexer.exprToToken()
 
     def factor(self):
+        global flag
         token = self.currentToken
         if token.value == 'if':
             self.currentToken = self.lexer.exprToToken()
             condition = self.boolExpr()
             #if self.currentToken.value == 'then':
             self.currentToken = self.lexer.exprToToken()
+            flag = 1
             ifState = self.semiExpr()
             #if self.currentToken == 'else':
             self.currentToken = self.lexer.exprToToken()
+            flag = 1
             elseState = self.semiExpr()
             return If(condition, ifState, elseState)
 
@@ -256,6 +261,7 @@ class Parser(object):
             condFalse = Skip(Token('Keyword', 'skip'))
             if self.currentToken.value == 'do':
                 self.currentToken = self.lexer.exprToToken()
+                flag = 1
                 condTrue = self.semiExpr()
             return While(condition, condTrue, condFalse)
 
@@ -342,11 +348,15 @@ class Parser(object):
         return node
     
     def semiExpr(self):
+        global flag
         node = self.assignExpr()
         while self.currentToken.type == 'Semi':
             token = self.currentToken
             self.currentToken = self.lexer.exprToToken()
             node = Semi(node, token.type, self.assignExpr())
+            if flag == 1:
+                flag = 0
+                return node
         return node
 
     def parseExpr(self):
@@ -433,7 +443,6 @@ def main():
             expression = raw_input()
         except EOFError:
             break
-        
         expression = expression.replace("'","")
         tokens = Lexer(expression)
         parser = Parser(tokens)
